@@ -432,7 +432,7 @@ div.tocify {
 <h2 number="3.3"><span class="header-section-number">3.3</span> COVID death trend</h2>
 <ol style="list-style-type: lower-roman">
 <li><p>For each month in 2020, plot the monthly deaths per 100k heatmap by state on US map. Use the same color range across months. (Hints: Set <code>limits</code> argument in <code>scale_fill_gradient()</code> or use <code>facet_wrap()</code>; use <code>lubridate::month()</code> and <code>lubridate::year()</code> to extract month and year from date; use <code>tidyr::complete(state, month, fill = list(new_case_per100k = NA))</code> to complete the missing months with no cases.)</p></li>
-<li><p>(Optional) Use <code>plotly</code> to animate the monthly maps in i). Does it reveal any systematic way to capture the dynamic changes among states? (Hints: <code>plotly</code> only recognizes abbreviation of state names. Use <code>unique(us_map(regions = &quot;states&quot;) %&gt;% select(abbr, full))</code> to get the abbreviation and merge with the data to get state abbreviation.)</p></li>
+<li><p>(Optional) Use <code>plotly</code> to animate the monthly maps in i). Does it reveal any systematic way to capture the dynamic changes among states? (Hints: Follow <em>Appendix 3: Plotly heatmap::</em> to plot the heatmap using <code>plotly</code>. Use <code>frame</code> argument in <code>add_trace()</code> for animation. <code>plotly</code> only recognizes abbreviation of state names. Use <code>unique(us_map(regions = &quot;states&quot;) %&gt;% select(abbr, full))</code> to get the abbreviation and merge with the data to get state abbreviation.)</p></li>
 </ol>
 </div>
 </div>
