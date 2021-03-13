@@ -102,9 +102,9 @@ iv) (Optional) Use `covid_intervention` to see whether the effectiveness of lock
 
 ## COVID death trend
 
-i) For each month, plot the monthly deaths per 100k heatmap by state on US map. Use the same color range across months. (Hints: Set `limits` argument in `scale_fill_gradient`.)
+i) For each month in 2020, plot the monthly deaths per 100k heatmap by state on US map. Use the same color range across months. (Hints: Set `limits` argument in `scale_fill_gradient()` or use `facet_wrap()`; use `lubridate::month()` and `lubridate::year()` to extract month and year from date; use `tidyr::complete(state, month, fill = list(new_case_per100k = NA))` to complete the missing months with no cases.)
 
-ii) Use `plotly` to animate the monthly maps in i). Does it reveal any systematic way to capture the dynamic changes among states? 
+ii) (Optional) Use `plotly` to animate the monthly maps in i). Does it reveal any systematic way to capture the dynamic changes among states? (Hints: `plotly` only recognizes abbreviation of state names. Use `unique(us_map(regions = "states") %>% select(abbr, full))` to get the abbreviation and merge with the data to get state abbreviation.)
 
 # COVID factor
 
@@ -127,7 +127,7 @@ iii) Use LASSO to choose a parsimonious model with all available sensible county
 
 iv) Use `Cp` or BIC to fine tune the LASSO model from iii). Again **force in State** in the process. 
 
-v) If necessary, reduce the model from iv) to a final model with all variables being siginificant at 0.05 level. Are the linear model assumptions all reasonably met?
+v) If necessary, reduce the model from iv) to a final model with all variables being significant at 0.05 level. Are the linear model assumptions all reasonably met?
 
 vi) It has been shown that COVID affects elderly the most. It is also claimed that the COVID death rate among African Americans and Latinxs is higher. Does your analysis support these arguments?
 
@@ -425,13 +425,14 @@ nyc_rates %<>%
   
 ## Continental US cases
 
-We only consider cases and death in continental US. Alaska, Hawaii, and Puerto Rico have 02, 15, and 72 as their respective first 2 digits of their FIPS. We use the `%/%` operator for integer division to get the first 2 digits of FIPS. All data of counties in NYC are aggregated as `County == "New York City"` in `covid_rates` with no FIPS, so we combine the NYC data into `covid_rate`.
+We only consider cases and death in continental US. Alaska, Hawaii, and Puerto Rico have 02, 15, and 72 as their respective first 2 digits of their FIPS. We use the `%/%` operator for integer division to get the first 2 digits of FIPS. We also remove Virgin Islands and Northern Mariana Islands. All data of counties in NYC are aggregated as `County == "New York City"` in `covid_rates` with no FIPS, so we combine the NYC data into `covid_rate`.
 
 ```{r, eval = data_cleaned}
 covid_rates <- covid_rates %>% 
   arrange(fips, date) %>%
   filter(!(fips %/% 1000 %in% c(2, 15, 72))) %>%
   filter(county != "New York City") %>%
+  filter(!(state %in% c("Virgin Islands", "Northern Mariana Islands"))) %>%
   rename(FIPS = "fips",
          County = "county",
          State = "state",
@@ -475,7 +476,7 @@ covid_rates$cum_cases[is.na(covid_rates$cum_cases)] <- 0
 covid_rates$cum_deaths[is.na(covid_rates$cum_deaths)] <- 0
 ```
 
-```{r}
+```{r, eval = data_cleaned}
 fwrite(covid_rates %>% 
          filter(week < 58) %>% 
          arrange(FIPS, date), 
